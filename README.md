@@ -1,6 +1,8 @@
 # ProjectEuler
 
-This is a collection of all the code that I've written over the past decade working on Project Euler problems, solving 113 so far.
+![My Project Euler profile image, listing my rank as Cube, which is the fifth highest rank](https://projecteuler.net/profile/LearningMathAndPython.png)
+
+This is a collection of all the code that I've written over the past decade working on Project Euler problems, solving 113 so far. 
 I'm currently in the process of moving it from a private repository to a public repository, as such I'm taking the opportunity to both clean up the code and remove any references to solved problems.
 This means only my primes.py code is currently available.
 
