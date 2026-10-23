@@ -1,0 +1,15 @@
+import time
+
+def printTimeTaken(func):
+    # func is a function taking no arguments
+    def wrapper(*args, **kwargs):
+        start = time.time()
+
+        result = func(*args, **kwargs)
+
+        end = time.time()
+        print(f"{end-start} seconds")
+
+        return result
+    
+    return wrapper
