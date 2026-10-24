@@ -31,11 +31,12 @@ def main(problemNumber):
 
     template = '\n'.join([imports, 
                 '\n',
+                '@wrappers.printTimeTaken',
                 'def main():',
-                '   pass',
+                '    pass',
                 '\n',
                 'if __name__ == "__main__":',
-                '   main()'
+                '    main()'
                 ])
 
     with open(fileName, "w") as file:

@@ -1,4 +1,5 @@
 from functools import cache
+from math import isqrt
 
 # Functions not related to the math
 
@@ -48,12 +49,14 @@ def factor(n, maxPrime = 1):
     if n < 0:
         return factor(-n, maxPrime)
 
-    possiblePrimes = primes(maxPrime + 1) if maxPrime > 1 else primes(n+1)
+    squareRootLimit = isqrt(n)+1
+
+    possiblePrimes = primes(maxPrime + 1) if maxPrime > 1 else primes(squareRootLimit)
 
     factorization = dict()
 
     for p in possiblePrimes:
-        if n < p:
+        if p > squareRootLimit:
             break
         elif n % p != 0:
             continue
@@ -64,6 +67,9 @@ def factor(n, maxPrime = 1):
         while n % p == 0:
             factorization[p] += 1
             n = n // p
+
+    if n > 1:
+        factorization[n] = 1
 
     return factorization
 
@@ -102,7 +108,11 @@ def totient(n, maxPrime = 1):
 
     return t
 
-def isprime(n, maxPrime = 1):
+# Functions for checking if a number is prime
+
+# The really naive approach
+@cache
+def isprimeNaive(n, maxPrime = 1):
     """
     Function that determines if n is a prime or not.
     Inputs:
@@ -114,15 +124,38 @@ def isprime(n, maxPrime = 1):
     If maxPrime == 1, then we will call primes(n+1).
     Otherwise, we will call primes(maxPrime + 1).
     """
+    if maxPrime == 1:
+        return n == primes(n+1)[-1]
+
+    return n in primes(maxPrime + 1)
+
+def isprimeDivision(n):
+    maxPrime = isqrt(n)
+
+    if maxPrime**2 == n:
+        return False
+
+    for p in primes(maxPrime+1):
+        if n % p == 0:
+            return False
+
+    return True
+
+primalityMethods = {"Naive" : isprimeNaive, "Trial Division" : isprimeDivision}
+
+@cache
+def isprime(n, method = "Trial Division", **kwargs):
+    """
+    Function that allows you to pick the method for finding if a number is prime
+    """
     if not isinstance(n, int):
         raise Exception(f"Not defined for non-integers {n}")
     elif n < 0:
         return isprime(-n, maxPrime)
 
-    if maxPrime == 1:
-        return n == primes(n+1)[-1]
 
-    return n in primes(maxPrime + 1)
+    return primalityMethods[method](n,**kwargs)
+
 
 def isprimepower(n, maxPrime = 1):
     """
@@ -181,8 +214,8 @@ METHODS = {"Eratosthenes" : primesErato}
 def primes(N, method = "Eratosthenes"):
     # Return all primes less than N as a tuple
     # Uses method requested
-    print("Generating primes")
+    #print("Generating primes")
     p = METHODS[method](N)
-    print("Primes Generated")
+    #print("Primes Generated")
     return p
 
