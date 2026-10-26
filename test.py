@@ -7,5 +7,8 @@ class TestPrimeMethods(unittest.TestCase):
         self.assertTrue(primes.isprime(37))
         self.assertFalse(primes.isprime(35))
 
+    def test_primes(self):
+        self.assertEqual(primes.primes(12), [2, 3, 5, 7, 11])
+
 if __name__ == "__main__":
     unittest.main()
