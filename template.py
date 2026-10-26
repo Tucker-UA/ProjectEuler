@@ -3,9 +3,6 @@
 import os, sys
 from pathlib import Path
 
-
-
-
 # Script to generate the default python file for these problems
 
 def main(problemNumber):
