@@ -111,10 +111,11 @@ def totient(n, maxPrime = 1):
 # Functions for checking if a number is prime
 
 # The really naive approach
-@cache
 def isprimeNaive(n, maxPrime = 1):
     """
     Function that determines if n is a prime or not.
+    Does so by checking if it is in the list of primes.
+
     Inputs:
         - n:            integer
         - maxPrime:     positive integer > 2
@@ -124,20 +125,35 @@ def isprimeNaive(n, maxPrime = 1):
     If maxPrime == 1, then we will call primes(n+1).
     Otherwise, we will call primes(maxPrime + 1).
     """
-    if maxPrime == 1:
+    if n >= maxPrime:
         return n == primes(n+1)[-1]
 
     return n in primes(maxPrime + 1)
 
-def isprimeDivision(n):
-    maxPrime = isqrt(n)
+def isprimeDivision(n, maxPrime = 1):
+    """
+    Function that determines if n is a prime or not.
+    Does so by checking if it is divisible by primes less than maxPrime.
 
-    if maxPrime**2 == n:
-        return False
+    Inputs:
+        - n:            integer
+        - maxPrime:     positive integer > 2
+    Output:
+        - True or False
+
+    If maxPrime == 1, then we will set maxPrime = isqrt(n).
+    """
+    if maxPrime == 1:
+        maxPrime = isqrt(n)
+
+        if maxPrime**2 == n:
+            return False
 
     for p in primes(maxPrime+1):
         if n % p == 0:
-            return False
+            return n == p
+        elif n < p:
+            break
 
     return True
 
@@ -151,7 +167,9 @@ def isprime(n, method = "Trial Division", **kwargs):
     if not isinstance(n, int):
         raise Exception(f"Not defined for non-integers {n}")
     elif n < 0:
-        return isprime(-n, maxPrime)
+        return isprime(-n, method = method, **kwargs)
+    elif n == 1:
+        return False
 
 
     return primalityMethods[method](n,**kwargs)
