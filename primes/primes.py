@@ -169,7 +169,7 @@ def probablePrime(base, n):
 def strongProbablePrime(base, n):
     """
     Checks to see if n is a strong probable prime in the given base
-    Assumes that the base is prime.
+    Assumes that the base is prime and does not equal n.
     Returns true if n satisfies pow(base, d, n) == 1 or pow(base ** d, 2 ** r, n) == -1 for n-1 = (2**s)*d and 0 < r < s
     Returns false otherwise.
     """
@@ -181,13 +181,17 @@ def strongProbablePrime(base, n):
         d = d // 2
         s += 1
 
-    if pow(base, d, n) == 1:
+    if d == 1: # We are dealing with a fermat number
+        # do the probable prime test
+        if not probablePrime(base, n):
+            return False
+    elif pow(base, d, n) == 1:
         return True
 
     e = base ** d
 
     for r in range(s):
-        if pow(e, 2**r, n) == -1:
+        if pow(e, 2**r, n) == n-1:
             return True
 
     return False
