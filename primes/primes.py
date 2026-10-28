@@ -157,10 +157,72 @@ def isprimeDivision(n, maxPrime = 1):
 
     return True
 
+def probablePrime(base, n):
+    """
+    Checks to see if n is a probable prime in the given base
+    Assumes that the base is prime.
+    Returns true if n satisfies pow(base, n-1, n) = 1
+    Returns false otherwise.
+    """
+    return pow(base, n-1, mod=n) == 1
+
+def strongProbablePrime(base, n):
+    """
+    Checks to see if n is a strong probable prime in the given base
+    Assumes that the base is prime.
+    Returns true if n satisfies pow(base, d, n) == 1 or pow(base ** d, 2 ** r, n) == -1 for n-1 = (2**s)*d and 0 < r < s
+    Returns false otherwise.
+    """
+    m = n - 1
+    d = m
+    s = 0
+
+    while d % 2 == 0:
+        d = d // 2
+        s += 1
+
+    if pow(base, d, n) == 1:
+        return True
+
+    e = base ** d
+
+    for r in range(s):
+        if pow(e, 2**r, n) == -1:
+            return True
+
+    return False
+
+def multipleStrongProbablePrime(bases, n):
+    """
+    Does the strong probable prime test for the given bases.
+    Returns False if any is not a strong probable prime
+    """
+    return all(strongProbablePrime(base, n) for base in bases)
+
+def isprimeStrong(n, maxPrime = 1):
+    """
+    Using strong probable primes and numbers from t5k.org, we check for primality.
+    Tries to do as few strong probable primes as possible.
+    Returns True if it succeeds and False otherwise.
+    Will only be probabilistic for n > 341*pow(10,12)
+    """
+    if n < 1373653:
+        return multipleStrongProbablePrime([2,3], n)
+    elif n < 25326001:
+        return multipleStrongProbablePrime([2,3,5], n)
+    elif n < 2152302898747:
+        return multipleStrongProbablePrime([2,3,5,7,11], n)
+    elif n < 3474749660383:
+        return multipleStrongProbablePrime([2,3,5,7,11,13], n)
+    
+    return multipleStrongProbablePrime([2,3,5,7,11,13,17], n)
+
 primalityMethods = {"Naive" : isprimeNaive, "Trial Division" : isprimeDivision}
+primalityMethods["Best Deterministic"] = isprimeDivision
+primalityMethods["Best Probabilistic"] = isprimeStrong
 
 @cache
-def isprime(n, method = "Trial Division", **kwargs):
+def isprime(n, method = "Best Probabilistic", **kwargs):
     """
     Function that allows you to pick the method for finding if a number is prime
     """
@@ -170,7 +232,10 @@ def isprime(n, method = "Trial Division", **kwargs):
         return isprime(-n, method = method, **kwargs)
     elif n == 1:
         return False
-
+    elif n % 2 == 0:
+        return n == 2
+    elif n % 3 == 0:
+        return n == 3
 
     return primalityMethods[method](n,**kwargs)
 
